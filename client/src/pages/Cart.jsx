@@ -164,6 +164,9 @@ const Cart = () => {
   const navigate = useNavigate();
   const quantity = useSelector(state=>state.cart.quantity);
   const dispatch = useDispatch();
+  const shippingCost = 150;
+  const shippingDiscount = useState(0);
+  const finalAmount = useState(0);
 
 
   const onToken = (stripeToken) => {
@@ -172,20 +175,22 @@ const Cart = () => {
 
   useEffect(() => {
     const makeRequest = async () => {
+      const shippingDiscount = cart.total > 1000 ? -150 : 0;
+      const finalAmount = cart.total + shippingCost - shippingDiscount;
       try {
         const res = await userRequest.post("/checkout/payment", {
           tokenId: stripeToken.id,
-          amount: 500,
+          amount: finalAmount,
         });
         navigate("/success", {
           stripeData: res.data,
           products: cart, });
-      } catch {
-
+      } catch(err) {
+        console.error("Chyba v placení:", err);
       }
     };
     stripeToken && makeRequest();
-  }, [stripeToken, cart.total, cart, navigate]);
+  }, [stripeToken, cart.total, cart,shippingDiscount, navigate]);
 
 
   const handleRemoveFromCart = (product) => {
@@ -259,11 +264,11 @@ const Cart = () => {
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Sleva na dopravu</SummaryItemText>
-              <SummaryItemPrice>-150 CZK</SummaryItemPrice>
+              <SummaryItemPrice>{shippingDiscount}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Celkově</SummaryItemText>
-              <SummaryItemPrice>{cart.total},- CZK</SummaryItemPrice>
+              <SummaryItemPrice>{finalAmount},- CZK</SummaryItemPrice>
             </SummaryItem>
             <StripeCheckout
               name="RJ - shop"
