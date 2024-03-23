@@ -159,14 +159,13 @@ cursor: pointer;
 `;
 
 const Cart = () => {
-  const cart = useSelector((state) => state.cart);
+  const quantity = useSelector(state=>state.cart.quantity);
+  const shippingCost = useSelector(state=>state.cart.shippingCost);
+  const shippingDiscount = useSelector(state=>state.cart.shippingDiscount);
+  const cart = useSelector(state => state.cart);
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
-  const quantity = useSelector(state=>state.cart.quantity);
   const dispatch = useDispatch();
-  const shippingCost = 150;
-  const shippingDiscount = useState(0);
-  const finalAmount = useState(0);
 
 
   const onToken = (stripeToken) => {
@@ -175,22 +174,20 @@ const Cart = () => {
 
   useEffect(() => {
     const makeRequest = async () => {
-      const shippingDiscount = cart.total > 1000 ? -150 : 0;
-      const finalAmount = cart.total + shippingCost - shippingDiscount;
       try {
         const res = await userRequest.post("/checkout/payment", {
           tokenId: stripeToken.id,
-          amount: finalAmount,
+          amount: 500,
         });
         navigate("/success", {
           stripeData: res.data,
           products: cart, });
-      } catch(err) {
-        console.error("Chyba v placení:", err);
+      } catch {
+
       }
     };
     stripeToken && makeRequest();
-  }, [stripeToken, cart.total, cart,shippingDiscount, navigate]);
+  }, [stripeToken, cart.total, cart, navigate]);
 
 
   const handleRemoveFromCart = (product) => {
@@ -260,15 +257,15 @@ const Cart = () => {
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Doprava</SummaryItemText>
-              <SummaryItemPrice>150 CZK</SummaryItemPrice>
+              <SummaryItemPrice>{shippingCost},- CZK</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Sleva na dopravu</SummaryItemText>
-              <SummaryItemPrice>{shippingDiscount}</SummaryItemPrice>
+              <SummaryItemPrice>{shippingDiscount},- CZK</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Celkově</SummaryItemText>
-              <SummaryItemPrice>{finalAmount},- CZK</SummaryItemPrice>
+              <SummaryItemPrice>{cart.total},- CZK</SummaryItemPrice>
             </SummaryItem>
             <StripeCheckout
               name="RJ - shop"
