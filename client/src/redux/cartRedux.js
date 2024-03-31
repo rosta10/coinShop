@@ -6,7 +6,8 @@ const cartSlice = createSlice({
     products: [],
     quantity: 0,
     total: 0,
-    shippingCost: 150,
+    totalAmount: 0,
+    //shippingCost: 150, nefunguje
     shippingDiscount: 0,
   },
   reducers: {
@@ -14,7 +15,7 @@ const cartSlice = createSlice({
           state.quantity += 1;
           state.products.push(action.payload);
           state.total += action.payload.price * action.payload.quantity;
-          state.shippingDiscount = state.total >= 1000 ? -state.shippingCost : 0;
+          updateShippingDiscount(state);
       },
 
     removeFromCart(state, action) {
@@ -31,7 +32,7 @@ const cartSlice = createSlice({
       });
       state.quantity -= 1;
       state.total -= action.payload.price * action.payload.quantity;
-      state.shippingDiscount = state.total >= 1000 ? -state.shippingCost : 0;
+      updateShippingDiscount(state);
     },
 
     decreaseQuantity(state, action) {
@@ -40,7 +41,7 @@ const cartSlice = createSlice({
           if(cartProduct.quantity > 1){
             cartProduct.quantity -= 1;
             state.total -= action.payload.price;
-            state.shippingDiscount = state.total >= 1000 ? -state.shippingCost : 0;
+            updateShippingDiscount(state);
           }
         }
         localStorage.setItem("products", JSON.stringify(state.products));
@@ -53,7 +54,7 @@ const cartSlice = createSlice({
         if (cartProduct._id === action.payload._id) {
           cartProduct.quantity += 1;
           state.total += action.payload.price;
-          state.shippingDiscount = state.total >= 1000 ? -state.shippingCost : 0;
+          updateShippingDiscount(state);
         }
         
         localStorage.setItem("products", JSON.stringify(state.products));
@@ -62,6 +63,12 @@ const cartSlice = createSlice({
     },
   },
 });
+
+function updateShippingDiscount(state) {
+  state.shippingCost = state.total === 0 ? 0 : 150; //když jsem nastavil hodnotu v slideReducer, tak se mi pokaždé ukazovala hodnota jako undefined
+  state.shippingDiscount = state.total >= 1000 ? -state.shippingCost : 0;
+  state.totalAmount = state.total + state.shippingCost + state.shippingDiscount;
+}
 
 export const { addProduct, removeFromCart, decreaseQuantity, increaseQuantity } = cartSlice.actions;
 export default cartSlice.reducer;
