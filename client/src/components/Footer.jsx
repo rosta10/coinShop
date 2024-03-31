@@ -9,6 +9,7 @@ import {
 } from "@material-ui/icons";
 import styled from "styled-components";
 import { mobile } from "../responsive";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -84,6 +85,11 @@ const Payment = styled.img`
     width: 50%;
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+`;
+
 const Footer = () => {
   return (
     <Container>
@@ -110,13 +116,11 @@ const Footer = () => {
       <Center>
         <Title>Odkazy</Title>
         <List>
-          <ListItem>Domů</ListItem>
-          <ListItem>Košík</ListItem>
-          <ListItem>Mince</ListItem>
-          <ListItem>Bankovky</ListItem>
-          <ListItem>Známky</ListItem>
-          <ListItem>Můj účet</ListItem>
-          <ListItem>Oblíbené položky</ListItem>
+          <ListItem><StyledLink to={'/'}>Domů</StyledLink></ListItem>
+          <ListItem><StyledLink to={'/cart'}>Košík</StyledLink></ListItem>
+          <ListItem><StyledLink to={'/products/coin'}>Mince</StyledLink></ListItem>
+          <ListItem><StyledLink to={'/products/banknote'}>bankovky</StyledLink></ListItem>
+          <ListItem><StyledLink to={'/products/stamps'}>Známky</StyledLink></ListItem>
         </List>
       </Center>
       <Right>
