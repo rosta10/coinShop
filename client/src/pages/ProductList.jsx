@@ -60,12 +60,28 @@ const ProductList = () => {
       <FilterContainer>
         <Filter>
           <FilterText>Filtr:</FilterText>
-          <Select name="type" onChange={handleFilters}>
-            <Option disabled>Typ</Option>
-            <Option>zlaté</Option>
-            <Option>stříbrné</Option>
-            <Option>papírové</Option>
-          </Select>
+          {cat === "banknote" ? (
+            <Select name="type" onChange={handleFilters}>
+              <Option value="" selected>Všechny</Option>
+              <Option>české</Option>
+              <Option>nové</Option>
+              <Option>zahraniční</Option>
+            </Select>
+          ) : cat === "coin" ? (
+            <Select name="type" onChange={handleFilters}>
+              <Option value="" selected>Všechny</Option>
+              <Option>zlaté</Option>
+              <Option>stříbrné</Option>
+              <Option>bronzové</Option>
+            </Select>
+          ) : (
+            <Select name="stamps" onChange={handleFilters}>
+              <Option value="" selected>Všechny</Option>
+              <Option>poštovní</Option>
+              <Option>historické</Option>
+              <Option>sběratelské</Option>
+            </Select>
+          )}
         </Filter>
         <Filter>
           <FilterText>Řazení:</FilterText>

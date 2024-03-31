@@ -143,6 +143,7 @@ const Button = styled.button`
   background-color: black;
   color: white;
   font-weight: 600;
+  cursor: pointer;
 `;
 
 const DeleteIcon = styled(Delete)`
@@ -162,12 +163,13 @@ const Cart = () => {
   const quantity = useSelector(state=>state.cart.quantity);
   const shippingCost = useSelector(state=>state.cart.shippingCost);
   const shippingDiscount = useSelector(state=>state.cart.shippingDiscount);
+  const totalAmount = useSelector(state=>state.cart.totalAmount);
   const cart = useSelector(state => state.cart);
+  console.log(cart);
   const [stripeToken, setStripeToken] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-
+  
   const onToken = (stripeToken) => {
     setStripeToken(stripeToken);
   };
@@ -217,7 +219,6 @@ const Cart = () => {
             <TopText>NÁKUPNÍ KOŠÍK ({quantity})</TopText>
             <TopText>OBLÍBENÉ (0)</TopText>
           </TopTexts>
-          <TopButton type="filled">ZAPLATIT</TopButton>
         </Top>
         <Bottom>
           <Info>
@@ -242,9 +243,7 @@ const Cart = () => {
                     <IncreaseQuantity onClick={() => handleIncreaseQuantity(product)}/>
                     <DeleteIcon onClick={() => handleRemoveFromCart(product)}/>
                   </ProductAmountContainer>
-                  <ProductPrice>
-                    {product.price * product.quantity},- CZK
-                  </ProductPrice>
+                  <ProductPrice>{product.price * product.quantity},- CZK</ProductPrice>
                 </PriceDetail>
               </Product>
             ))}
@@ -265,18 +264,17 @@ const Cart = () => {
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Celkově</SummaryItemText>
-              <SummaryItemPrice>{cart.total},- CZK</SummaryItemPrice>
+              <SummaryItemPrice>{totalAmount},- CZK</SummaryItemPrice>
             </SummaryItem>
             <StripeCheckout
               name="RJ - shop"
-              image="https://img41.rajce.idnes.cz/d4102/18/18493/18493889_c9bdb110fac72ad76ff759007b1247dc/images/Screenshot2023-05-24at16-35-40HipsterShopBusinessLogoBrandCrowdLogoMakerBrandCrowdBrandCrowd.jpg?ver=0"
+              image="logo.png"
               billingAddress
               shippingAddress
-              description={`Celková cena je ${cart.total},- CZK`}
+              description={`Celková cena je ${totalAmount},- CZK`}
               amount={cart.total * 100}
               token={onToken}
               stripeKey={process.env.REACT_APP_STRIPE}
-
             >
               <Button>ZAPLATIT</Button>
             </StripeCheckout>
